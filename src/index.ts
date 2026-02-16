@@ -1,9 +1,9 @@
 /**
- * @fleeks-ai/sdk — TypeScript/JavaScript SDK for the Fleeks AI Development Platform
+ * @fleeks/sdk — TypeScript/JavaScript SDK for the Fleeks AI Development Platform
  *
  * @example
  * ```typescript
- * import { FleeksClient } from '@fleeks-ai/sdk';
+ * import { FleeksClient } from '@fleeks/sdk';
  *
  * const client = new FleeksClient({ apiKey: 'fleeks_...' });
  * const workspace = await client.workspaces.create({ projectId: 'my-project' });

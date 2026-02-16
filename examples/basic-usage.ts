@@ -1,9 +1,9 @@
 /**
- * Basic usage example for @fleeks-ai/sdk
+ * Basic usage example for @fleeks/sdk
  *
  * Run: npx ts-node examples/basic-usage.ts
  */
-import { FleeksClient } from '@fleeks-ai/sdk';
+import { FleeksClient } from '@fleeks/sdk';
 
 async function main() {
   // Create a client (reads FLEEKS_API_KEY from env if not passed)
