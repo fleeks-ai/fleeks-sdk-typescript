@@ -1,5 +1,5 @@
 {
-  "name": "@fleeks/sdk",
+  "name": "@fleeks-ai/sdk",
   "version": "0.3.0",
   "description": "TypeScript/JavaScript SDK for the Fleeks Development Platform",
   "main": "./dist/index.cjs",

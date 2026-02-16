@@ -1,21 +1,21 @@
-# @fleeks/sdk
+# @fleeks-ai/sdk
 
 > TypeScript/JavaScript SDK for the Fleeks AI Development Platform
 
-[![npm version](https://img.shields.io/npm/v/@fleeks/sdk.svg)](https://www.npmjs.com/package/@fleeks/sdk)
+[![npm version](https://img.shields.io/npm/v/@fleeks-ai/sdk.svg)](https://www.npmjs.com/package/@fleeks-ai/sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A518-green.svg)](https://nodejs.org)
 
 ## Installation
 
 ```bash
-npm install @fleeks/sdk
+npm install @fleeks-ai/sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { FleeksClient } from '@fleeks/sdk';
+import { FleeksClient } from '@fleeks-ai/sdk';
 
 const client = new FleeksClient({ apiKey: 'fleeks_...' });
 
@@ -148,7 +148,7 @@ await workspace.containers.restart();
 ### Lifecycle Management
 
 ```typescript
-import { LifecyclePresets, IdleAction } from '@fleeks/sdk';
+import { LifecyclePresets, IdleAction } from '@fleeks-ai/sdk';
 
 // Send heartbeat
 await workspace.containers.heartbeat();
@@ -170,7 +170,7 @@ await workspace.containers.setKeepAlive(true);
 ### Agents
 
 ```typescript
-import { AgentType } from '@fleeks/sdk';
+import { AgentType } from '@fleeks-ai/sdk';
 
 // Execute an agent task
 const execution = await workspace.agents.execute({
@@ -201,7 +201,7 @@ await workspace.agents.stop(execution.agentId);
 ### Embeds
 
 ```typescript
-import { EmbedTemplate, EmbedTheme, EmbedLayoutPreset } from '@fleeks/sdk';
+import { EmbedTemplate, EmbedTheme, EmbedLayoutPreset } from '@fleeks-ai/sdk';
 
 // Create with convenience factory
 const embed = await client.embeds.createReact('My Demo', {
@@ -265,7 +265,7 @@ import {
   FleeksAuthenticationError,
   FleeksRateLimitError,
   FleeksResourceNotFoundError,
-} from '@fleeks/sdk';
+} from '@fleeks-ai/sdk';
 
 try {
   await client.workspaces.get('nonexistent');

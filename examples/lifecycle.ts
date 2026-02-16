@@ -1,5 +1,5 @@
 /**
- * Lifecycle management example for @fleeks/sdk
+ * Lifecycle management example for @fleeks-ai/sdk
  *
  * Run: npx ts-node examples/lifecycle.ts
  */
@@ -8,7 +8,7 @@ import {
   LifecyclePresets,
   IdleAction,
   TIER_LIMITS,
-} from '@fleeks/sdk';
+} from '@fleeks-ai/sdk';
 
 async function main() {
   const client = new FleeksClient();

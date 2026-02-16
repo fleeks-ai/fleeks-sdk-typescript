@@ -1,5 +1,5 @@
 /**
- * Embeds example for @fleeks/sdk
+ * Embeds example for @fleeks-ai/sdk
  *
  * Run: npx ts-node examples/embeds.ts
  */
@@ -9,7 +9,7 @@ import {
   DisplayMode,
   EmbedTheme,
   EmbedLayoutPreset,
-} from '@fleeks/sdk';
+} from '@fleeks-ai/sdk';
 
 async function main() {
   const client = new FleeksClient();
