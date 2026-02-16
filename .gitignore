@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+.env*
+.DS_Store
+FLEEKS_TYPESCRIPT_SDK_GUIDE.md

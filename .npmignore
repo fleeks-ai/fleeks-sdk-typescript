@@ -1,0 +1,28 @@
+# Source files
+src/
+tests/
+examples/
+
+# Config files
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.github/
+
+# Development files
+*.test.ts
+*.spec.ts
+.gitignore
+.npmrc
+.env*
+
+# Documentation (keep README)
+FLEEKS_TYPESCRIPT_SDK_GUIDE.md
+CHANGELOG.md
+
+# Misc
+node_modules/
+coverage/
+.vscode/
+.idea/
+*.tgz
