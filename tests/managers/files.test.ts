@@ -40,7 +40,7 @@ describe('FileManager', () => {
 
       expect(result.path).toBe('hello.py');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/files/test-project/'),
+        expect.stringContaining('/api/v1/sdk/files/test-project'),
         expect.objectContaining({ method: 'POST' })
       );
     });
@@ -71,7 +71,7 @@ describe('FileManager', () => {
       await files.update('hello.py', 'print("Updated!")');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/files/test-project/content/'),
+        expect.stringContaining('/api/v1/sdk/files/test-project/content'),
         expect.objectContaining({ method: 'PUT' })
       );
     });
@@ -87,7 +87,7 @@ describe('FileManager', () => {
       await files.delete('hello.py');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/files/test-project/content/'),
+        expect.stringContaining('/api/v1/sdk/files/test-project/content'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });

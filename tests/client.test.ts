@@ -102,7 +102,7 @@ describe('FleeksClient', () => {
       const result = await client.get('test/endpoint');
       expect(result).toEqual({ status: 'ok' });
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/test/endpoint/'),
+        expect.stringContaining('/api/v1/sdk/test/endpoint'),
         expect.objectContaining({ method: 'GET' })
       );
     });
@@ -117,7 +117,7 @@ describe('FleeksClient', () => {
       const result = await client.post('test/endpoint', { name: 'test' });
       expect(result).toEqual({ id: '123' });
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/test/endpoint/'),
+        expect.stringContaining('/api/v1/sdk/test/endpoint'),
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ name: 'test' }),
@@ -134,7 +134,7 @@ describe('FleeksClient', () => {
 
       await client.delete('test/endpoint');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/test/endpoint/'),
+        expect.stringContaining('/api/v1/sdk/test/endpoint'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });
@@ -157,7 +157,7 @@ describe('FleeksClient', () => {
       const result = await client.healthCheck();
       expect(result).toEqual({ status: 'healthy' });
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/health/'),
+        expect.stringContaining('/health'),
         expect.any(Object)
       );
     });
@@ -171,7 +171,7 @@ describe('FleeksClient', () => {
 
       await client.getUsageStats();
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/usage/stats/'),
+        expect.stringContaining('/api/v1/sdk/usage/stats'),
         expect.any(Object)
       );
     });
@@ -185,7 +185,7 @@ describe('FleeksClient', () => {
 
       await client.getApiKeyInfo();
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/auth/key-info/'),
+        expect.stringContaining('/api/v1/sdk/auth/key-info'),
         expect.any(Object)
       );
     });

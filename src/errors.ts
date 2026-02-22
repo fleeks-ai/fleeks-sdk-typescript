@@ -36,8 +36,8 @@ export class FleeksAPIError extends FleeksError {
 export class FleeksRateLimitError extends FleeksAPIError {
   readonly retryAfter: number; // seconds
 
-  constructor(message: string, retryAfter: number = 60) {
-    super(message, 429);
+  constructor(message: string, retryAfter: number = 60, response?: unknown) {
+    super(message, 429, response);
     this.name = 'FleeksRateLimitError';
     this.retryAfter = retryAfter;
   }

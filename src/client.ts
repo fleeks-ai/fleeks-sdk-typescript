@@ -3,6 +3,7 @@ import { validateApiKey } from './auth';
 import { HttpClient } from './http';
 import { WorkspaceManager } from './managers/workspaces';
 import { EmbedManager } from './managers/embeds';
+import { DeployManager } from './managers/deploy';
 import { StreamingClient } from './managers/streaming';
 
 export class FleeksClient {
@@ -13,6 +14,7 @@ export class FleeksClient {
   // Lazy-loaded managers (private backing fields)
   private _workspaces?: WorkspaceManager;
   private _embeds?: EmbedManager;
+  private _deploy?: DeployManager;
   private _streaming?: StreamingClient;
 
   constructor(options: { apiKey?: string; config?: Partial<FleeksConfig> } = {}) {
@@ -37,6 +39,11 @@ export class FleeksClient {
   get embeds(): EmbedManager {
     this._embeds ??= new EmbedManager(this);
     return this._embeds;
+  }
+
+  get deploy(): DeployManager {
+    this._deploy ??= new DeployManager(this);
+    return this._deploy;
   }
 
   get streaming(): StreamingClient {

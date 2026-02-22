@@ -45,7 +45,7 @@ describe('WorkspaceManager', () => {
       expect(workspace.containerId).toBe('container-abc');
       expect(workspace.previewUrl).toBe('https://preview.fleeks.ai/test-project');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/workspaces/'),
+        expect.stringContaining('/api/v1/sdk/workspaces'),
         expect.objectContaining({ method: 'POST' })
       );
     });
@@ -91,7 +91,7 @@ describe('WorkspaceManager', () => {
       await client.workspaces.delete('test-project');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/workspaces/test-project/'),
+        expect.stringContaining('/api/v1/sdk/workspaces/test-project'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });

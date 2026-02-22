@@ -33,7 +33,7 @@ describe('ContainerManager', () => {
       const info = await containers.getInfo();
       expect(info.containerId).toBe('container-abc');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/containers/container-abc/info/'),
+        expect.stringContaining('/api/v1/sdk/containers/container-abc/info'),
         expect.any(Object)
       );
     });

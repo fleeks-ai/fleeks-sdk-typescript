@@ -48,6 +48,7 @@ export { TerminalManager } from './managers/terminal';
 export { ContainerManager } from './managers/containers';
 export { AgentManager } from './managers/agents';
 export { EmbedManager, Embed } from './managers/embeds';
+export { DeployManager } from './managers/deploy';
 export { StreamingClient } from './managers/streaming';
 
 // ── Types: Workspace ────────────────────────────────────────
@@ -151,6 +152,19 @@ export type {
 
 // ── Types: Common ───────────────────────────────────────────
 export type { PaginatedResponse, ApiResponse } from './types/common';
+
+// ── Types: Deploy ───────────────────────────────────────────
+export { DeploymentStatusEnum, DeployStatusResult } from './types/deploy';
+export type {
+  DeployCreateParams,
+  DeployResponse,
+  DeployStatus,
+  DeployLogs,
+  DeployRollbackResult,
+  DeployDeleteResult,
+  DeployListItem,
+  DeployListOptions,
+} from './types/deploy';
 
 // ── Utilities ───────────────────────────────────────────────
 export { toCamelCase, toSnakeCase } from './utils/case';

@@ -41,7 +41,7 @@ describe('AgentManager', () => {
       expect(execution.agentId).toBe('agent-123');
       expect(execution.status).toBe('running');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/agents/'),
+        expect.stringContaining('/api/v1/sdk/agents'),
         expect.objectContaining({ method: 'POST' })
       );
     });
@@ -130,7 +130,7 @@ describe('AgentManager', () => {
       await agents.stop('agent-123');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/agents/agent-123/'),
+        expect.stringContaining('/api/v1/sdk/agents/agent-123'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });

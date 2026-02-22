@@ -1,5 +1,5 @@
 /**
- * Normalize a URL with proper trailing slash for Django backend.
+ * Normalize a URL — strips trailing slashes (FastAPI convention).
  */
 export function normalizeUrl(
   baseUrl: string,
@@ -13,8 +13,7 @@ export function normalizeUrl(
     path = `${prefix}/${path}`;
   }
 
-  // Django requires trailing slash
-  const url = new URL(`/${path}/`, baseUrl);
+  const url = new URL(`/${path}`, baseUrl);
 
   if (params) {
     for (const [key, value] of Object.entries(params)) {

@@ -43,7 +43,7 @@ describe('TerminalManager', () => {
       expect(job.stdout).toBe('hello\n');
       expect(job.status).toBe('completed');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/terminal/execute/'),
+        expect.stringContaining('/api/v1/sdk/terminal/execute'),
         expect.objectContaining({ method: 'POST' })
       );
     });
@@ -61,7 +61,7 @@ describe('TerminalManager', () => {
 
       expect(job.status).toBe('running');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/terminal/background/'),
+        expect.stringContaining('/api/v1/sdk/terminal/background'),
         expect.objectContaining({ method: 'POST' })
       );
     });
@@ -107,7 +107,7 @@ describe('TerminalManager', () => {
       await terminal.stopJob('job-123');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/terminal/jobs/job-123/'),
+        expect.stringContaining('/api/v1/sdk/terminal/jobs/job-123'),
         expect.objectContaining({ method: 'DELETE' })
       );
     });

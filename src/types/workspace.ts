@@ -8,6 +8,8 @@ export interface WorkspaceInfo {
   resourceLimits: Record<string, unknown>;
   previewUrl?: string;
   websocketUrl?: string;
+  /** Numeric project ID required by deploy endpoints. */
+  dbProjectId: number | null;
 }
 
 export interface WorkspaceHealth {

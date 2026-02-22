@@ -44,7 +44,7 @@ describe('EmbedManager', () => {
       expect(embed.id).toBe('embed-abc');
       // Embeds use /api/v1/embeds/ not /api/v1/sdk/embeds/
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/embeds/'),
+        expect.stringContaining('/api/v1/embeds'),
         expect.objectContaining({ method: 'POST' })
       );
     });

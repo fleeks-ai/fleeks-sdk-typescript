@@ -166,9 +166,9 @@ export class HttpClient {
   }
 
   // ── URL Construction ──────────────────────────────────────
-  // CRITICAL: Must produce /api/v1/sdk/{endpoint}/ with trailing slash
+  // Produces /api/v1/sdk/{endpoint} — no trailing slash (FastAPI)
 
-  private buildUrl(
+  buildUrl(
     endpoint: string,
     params?: Record<string, string>,
     skipPrefix?: boolean,
@@ -181,8 +181,7 @@ export class HttpClient {
       path = `${prefix}/${path}`;
     }
 
-    // Django requires trailing slash
-    const url = new URL(`/${path}/`, this.config.baseUrl);
+    const url = new URL(`/${path}`, this.config.baseUrl);
 
     if (params) {
       for (const [key, value] of Object.entries(params)) {
@@ -191,6 +190,18 @@ export class HttpClient {
     }
 
     return url.toString();
+  }
+
+  /**
+   * Get the standard request headers (auth + content negotiation).
+   * Useful for custom requests like SSE streaming.
+   */
+  getRequestHeaders(): Record<string, string> {
+    return {
+      ...getAuthHeaders(this.config.apiKey),
+      'Accept': 'application/json',
+      'User-Agent': `fleeks-js-sdk/${SDK_VERSION}`,
+    };
   }
 
   // ── Retry Logic ───────────────────────────────────────────
@@ -236,8 +247,9 @@ export class HttpClient {
 
   private async handleErrorResponse(response: Response): Promise<never> {
     let detail = '';
+    let body: Record<string, unknown> | undefined;
     try {
-      const body = await response.json() as Record<string, unknown>;
+      body = await response.json() as Record<string, unknown>;
       detail = (body.detail ?? body.message ?? body.error ?? JSON.stringify(body)) as string;
     } catch {
       detail = await response.text().catch(() => 'Unknown error');
@@ -256,7 +268,7 @@ export class HttpClient {
         throw new FleeksValidationError(message);
       case 429: {
         const retryAfter = parseInt(response.headers.get('Retry-After') ?? '60', 10);
-        throw new FleeksRateLimitError(message, retryAfter);
+        throw new FleeksRateLimitError(detail, retryAfter, body);
       }
       default:
         throw new FleeksAPIError(message, response.status);

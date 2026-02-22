@@ -59,6 +59,8 @@ export interface HibernationResponse {
   action: string;
   estimatedResumeSeconds?: number;
   message: string;
+  /** Alias for `status` (convenience getter set by the SDK). */
+  state: string;
 }
 
 export interface LifecycleStatusResponse {

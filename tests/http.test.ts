@@ -40,7 +40,7 @@ describe('HttpClient', () => {
       await httpClient.request('GET', 'workspaces');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/workspaces/'),
+        expect.stringContaining('/api/v1/sdk/workspaces'),
         expect.any(Object)
       );
     });
@@ -55,7 +55,7 @@ describe('HttpClient', () => {
       await httpClient.request('GET', 'embeds', { prefixOverride: 'api/v1' });
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/embeds/'),
+        expect.stringContaining('/api/v1/embeds'),
         expect.any(Object)
       );
     });
@@ -70,7 +70,7 @@ describe('HttpClient', () => {
       await httpClient.request('GET', 'health', { skipPrefix: true });
 
       const url = (fetch as ReturnType<typeof vi.fn>).mock.calls[0][0];
-      expect(url).toContain('/health/');
+      expect(url).toContain('/health');
       expect(url).not.toContain('/api/v1/sdk/');
     });
 
@@ -90,7 +90,7 @@ describe('HttpClient', () => {
       expect(url).toContain('page_size=10');
     });
 
-    it('should add trailing slash (Django)', async () => {
+    it('should strip trailing slash (FastAPI)', async () => {
       (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: true,
         status: 200,
@@ -101,7 +101,7 @@ describe('HttpClient', () => {
 
       const url = (fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
       const urlPath = new URL(url).pathname;
-      expect(urlPath.endsWith('/')).toBe(true);
+      expect(urlPath.endsWith('/')).toBe(false);
     });
   });
 
@@ -220,7 +220,7 @@ describe('HttpClient', () => {
         .rejects.toThrow(FleeksValidationError);
     });
 
-    it('should throw FleeksRateLimitError on 429 with retryAfter', async () => {
+    it('should throw FleeksRateLimitError on 429 with retryAfter and preserve detail', async () => {
       (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: false,
         status: 429,
@@ -233,7 +233,10 @@ describe('HttpClient', () => {
         expect.fail('Should have thrown');
       } catch (error) {
         expect(error).toBeInstanceOf(FleeksRateLimitError);
-        expect((error as FleeksRateLimitError).retryAfter).toBe(30);
+        const rle = error as FleeksRateLimitError;
+        expect(rle.retryAfter).toBe(30);
+        expect(rle.message).toBe('Rate limited');
+        expect(rle.response).toEqual({ detail: 'Rate limited' });
       }
     });
 
