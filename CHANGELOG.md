@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-02-27
+
+### Changed
+
+- **AgentManager.stop()**: Changed from `DELETE agents/{id}` to `POST agents/{id}/stop`; now returns `StopAgentResponse` with `agentId`, `status`, `message`, and optional `handoffId`
+- **AgentManager.execute()**: Now forwards the `skills` option to the API when provided
+
+### Added
+
+- **StopAgentResponse**: New type for the stop-agent response payload
+- **HandoffAgentOptions.skills**: Optional `skills` string array for agent handoff and execution
+- **AgentHandoff.workspaceUrl**: Optional workspace URL returned from handoff
+- **AgentHandoff.containerId**: Optional container ID returned from handoff
+- **AgentHandoff.detectedTypes**: Optional detected file/project types array
+- **AgentHandoff.activeSkills**: Optional active skills array
+
+## [0.4.0] - 2026-02-22
+
+### Added
+
+- **DeployManager**: Full deployment lifecycle management — create, status, logs, stream SSE logs, rollback, list, delete
+- **DeployStatusResult**: Smart wrapper with `isRunning`, `isSucceeded`, `isFailed` convenience getters
+- **DeploymentStatusEnum**: Enum for deployment states (PENDING, IN_PROGRESS, SUCCEEDED, FAILED, CANCELLED)
+- **WorkspaceInfo.dbProjectId**: Expose the database project ID on workspace info
+
+### Changed
+
+- **URL Normalization**: All SDK-constructed URLs now strip trailing slashes for consistency
+- **HibernationResponse**: Added `.state` getter for convenient access
+- **Rate Limit Errors**: 429 responses now preserve the `detail` message from the API response body
+
+### Fixed
+
+- Internal URL builder no longer produces double slashes on nested paths
+
 ## [0.3.0] - 2026-02-16
 
 ### Added

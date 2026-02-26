@@ -101,6 +101,7 @@ export type {
   ExecuteAgentOptions,
   HandoffAgentOptions,
   ListAgentsOptions,
+  StopAgentResponse,
 } from './types/agent';
 
 // ── Types: Embed ────────────────────────────────────────────

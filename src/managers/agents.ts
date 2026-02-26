@@ -8,6 +8,7 @@ import type {
   ExecuteAgentOptions,
   HandoffAgentOptions,
   ListAgentsOptions,
+  StopAgentResponse,
 } from '../types/agent';
 import { AgentType } from '../types/agent';
 
@@ -32,6 +33,7 @@ export class AgentManager {
       ...(options.context && { context: options.context }),
       maxIterations: options.maxIterations ?? 10,
       autoApprove: options.autoApprove ?? false,
+      ...(options.skills && { skills: options.skills }),
     });
   }
 
@@ -47,6 +49,7 @@ export class AgentManager {
       ...(options.workspaceSnapshot && { workspaceSnapshot: options.workspaceSnapshot }),
       ...(options.conversationHistory && { conversationHistory: options.conversationHistory }),
       ...(options.agentType && { agentType: options.agentType }),
+      ...(options.skills && { skills: options.skills }),
     });
   }
 
@@ -83,7 +86,7 @@ export class AgentManager {
    * Stop a running agent.
    * @param agentId Agent identifier
    */
-  async stop(agentId: string): Promise<void> {
-    await this.client.delete(`agents/${agentId}`);
+  async stop(agentId: string): Promise<StopAgentResponse> {
+    return this.client.post<StopAgentResponse>(`agents/${agentId}/stop`);
   }
 }

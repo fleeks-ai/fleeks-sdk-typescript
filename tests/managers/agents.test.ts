@@ -45,6 +45,31 @@ describe('AgentManager', () => {
         expect.objectContaining({ method: 'POST' })
       );
     });
+
+    it('should pass skills option when provided', async () => {
+      (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          agent_id: 'agent-skill',
+          project_id: 'test-project',
+          task: 'build app',
+          status: 'running',
+          started_at: '2025-01-01T00:00:00Z',
+          message: 'Agent started with skills',
+        }),
+      });
+
+      const execution = await agents.execute({
+        task: 'build app',
+        agentType: AgentType.CODE,
+        skills: ['typescript', 'react'],
+      });
+
+      expect(execution.agentId).toBe('agent-skill');
+      const callBody = JSON.parse((fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].body);
+      expect(callBody.skills).toEqual(['typescript', 'react']);
+    });
   });
 
   describe('handoff', () => {
@@ -70,6 +95,37 @@ describe('AgentManager', () => {
 
       expect(handoff.handoffId).toBe('handoff-789');
       expect(handoff.workspaceSynced).toBe(true);
+    });
+
+    it('should return new handoff fields when present', async () => {
+      (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({
+          agent_id: 'agent-456',
+          project_id: 'test-project',
+          status: 'running',
+          handoff_id: 'handoff-789',
+          workspace_synced: true,
+          context_preserved: true,
+          message: 'Handoff successful',
+          workspace_url: 'https://workspace.fleeks.ai/w/abc',
+          container_id: 'ctr-xyz',
+          detected_types: ['typescript', 'react'],
+          active_skills: ['lint', 'test'],
+        }),
+      });
+
+      const handoff = await agents.handoff({
+        task: 'continue work',
+        localContext: {},
+        skills: ['lint', 'test'],
+      });
+
+      expect(handoff.workspaceUrl).toBe('https://workspace.fleeks.ai/w/abc');
+      expect(handoff.containerId).toBe('ctr-xyz');
+      expect(handoff.detectedTypes).toEqual(['typescript', 'react']);
+      expect(handoff.activeSkills).toEqual(['lint', 'test']);
     });
   });
 
@@ -124,14 +180,24 @@ describe('AgentManager', () => {
     it('should stop an agent', async () => {
       (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: true,
-        status: 204,
+        status: 200,
+        json: () => Promise.resolve({
+          agent_id: 'agent-123',
+          status: 'stopped',
+          message: 'Agent stopped successfully',
+          handoff_id: 'handoff-999',
+        }),
       });
 
-      await agents.stop('agent-123');
+      const result = await agents.stop('agent-123');
 
+      expect(result.agentId).toBe('agent-123');
+      expect(result.status).toBe('stopped');
+      expect(result.message).toBe('Agent stopped successfully');
+      expect(result.handoffId).toBe('handoff-999');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/v1/sdk/agents/agent-123'),
-        expect.objectContaining({ method: 'DELETE' })
+        expect.stringContaining('/api/v1/sdk/agents/agent-123/stop'),
+        expect.objectContaining({ method: 'POST' })
       );
     });
   });

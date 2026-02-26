@@ -23,6 +23,10 @@ export interface AgentHandoff {
   workspaceSynced: boolean;
   contextPreserved: boolean;
   message: string;
+  workspaceUrl?: string;
+  containerId?: string;
+  detectedTypes?: string[];
+  activeSkills?: string[];
 }
 
 export interface AgentStatusInfo {
@@ -64,6 +68,7 @@ export interface ExecuteAgentOptions {
   context?: Record<string, unknown>;
   maxIterations?: number;
   autoApprove?: boolean;
+  skills?: string[];
 }
 
 export interface HandoffAgentOptions {
@@ -72,6 +77,14 @@ export interface HandoffAgentOptions {
   workspaceSnapshot?: Record<string, unknown>;
   conversationHistory?: unknown[];
   agentType?: AgentType;
+  skills?: string[];
+}
+
+export interface StopAgentResponse {
+  agentId: string;
+  status: string;
+  message: string;
+  handoffId?: string;
 }
 
 export interface ListAgentsOptions {
