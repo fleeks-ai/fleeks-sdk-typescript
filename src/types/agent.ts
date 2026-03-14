@@ -92,3 +92,45 @@ export interface ListAgentsOptions {
   pageSize?: number;
   statusFilter?: string;
 }
+
+
+// ============================================================================
+// SUB-AGENT TYPES
+// ============================================================================
+
+export interface SubAgentUsage {
+  inputTokens: number;
+  outputTokens: number;
+}
+
+export interface RunSubAgentOptions {
+  /** The task prompt for the sub-agent (natural language). */
+  prompt: string;
+  /** Short label for logging/tracking (3-7 words). */
+  description?: string;
+  /** AI model to use ("auto" picks best available). */
+  model?: string;
+  /** Optional ID to link with parent agent session. */
+  parentSessionId?: string;
+  /** Optional context dictionary for the sub-agent. */
+  context?: Record<string, unknown>;
+  /** Max response tokens (default: 16384). */
+  maxTokens?: number;
+  /** Number of iterations (default: 1). */
+  maxIterations?: number;
+  /** Optional system prompt override. */
+  system?: string;
+  /** Sampling temperature (0.0 = deterministic). */
+  temperature?: number;
+}
+
+export interface SubAgentResult {
+  result: string;
+  description: string;
+  subagentId: string;
+  parentSessionId?: string;
+  usage?: SubAgentUsage;
+  model: string;
+  iterationsUsed: number;
+  error?: string;
+}

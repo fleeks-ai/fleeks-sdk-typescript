@@ -18,6 +18,12 @@ import type {
   DeployDeleteResult,
   DeployListItem,
   DeployListOptions,
+  ProvisionDbParams,
+  ProvisionDbResult,
+  MobileDistributeParams,
+  MobileDistributeResult,
+  DesktopDistributeParams,
+  DesktopDistributeResult,
 } from '../types/deploy';
 
 export class DeployManager {
@@ -120,6 +126,143 @@ export class DeployManager {
     } finally {
       reader.releaseLock();
     }
+  }
+
+  /**
+   * Provision a database for a deployed Cloud Run service.
+   *
+   * Creates a logical database on the in-cluster DB server and injects the
+   * connection URL as an environment variable on the target Cloud Run service.
+   *
+   * Supported `dbType` values: `"postgresql"`, `"mysql"`, `"mongodb"`,
+   * `"redis"`, `"qdrant"`, `"neo4j"`, `"kafka"`, `"mariadb"`.
+   *
+   * @example
+   * ```ts
+   * const db = await client.deploy.provisionDb({
+   *   projectId: 42,
+   *   dbType: 'postgresql',
+   * });
+   * console.log(db.connectionUrl);
+   * ```
+   */
+  async provisionDb(params: ProvisionDbParams): Promise<ProvisionDbResult> {
+    return this.client.post<ProvisionDbResult>('deploy/provision-db', {
+      project_id: params.projectId,
+      db_type: params.dbType ?? 'postgresql',
+      environment: params.environment ?? 'production',
+      ...(params.envVarName ? { env_var_name: params.envVarName } : {}),
+    });
+  }
+
+  /**
+   * Upload a mobile build artifact to GCS and get a download link + QR code.
+   *
+   * The signed URL is valid for 7 days. `result.qrCode` is a base64-encoded
+   * PNG — prefix it with `data:image/png;base64,` to embed in HTML/React.
+   *
+   * @example
+   * ```ts
+   * const fileInput = document.querySelector<HTMLInputElement>('#apk')!;
+   * const result = await client.deploy.distributeMobile({
+   *   projectId: 42,
+   *   platform: 'android',
+   *   version: '1.0.0',
+   *   artifact: fileInput.files![0],
+   * });
+   * console.log(result.downloadUrl);
+   * ```
+   */
+  async distributeMobile(
+    params: MobileDistributeParams
+  ): Promise<MobileDistributeResult> {
+    const form = new FormData();
+    const filename =
+      params.filename ??
+      (params.artifact instanceof File ? params.artifact.name : 'app.apk');
+    form.append(
+      'artifact',
+      params.artifact instanceof Blob || params.artifact instanceof File
+        ? params.artifact
+        : new Blob([params.artifact]),
+      filename
+    );
+
+    return this.client.httpClient.requestMultipart<MobileDistributeResult>(
+      'POST',
+      'deploy/distribute/mobile',
+      form,
+      {
+        params: {
+          project_id: String(params.projectId),
+          platform: params.platform ?? 'android',
+          version: params.version ?? '1.0.0',
+        },
+      }
+    );
+  }
+
+  /**
+   * Upload desktop installers to GCS and generate per-OS download links plus
+   * a public HTML landing page at `https://downloads.fleeks.ai/{projectId}`.
+   *
+   * At least one of `windows`, `macos`, or `linux` must be provided.
+   *
+   * @example
+   * ```ts
+   * const result = await client.deploy.distributeDesktop({
+   *   projectId: 42,
+   *   version: '1.0.0',
+   *   windows: windowsInstallerFile,
+   *   macos: macDmgFile,
+   * });
+   * console.log(result.landingPageUrl);
+   * ```
+   */
+  async distributeDesktop(
+    params: DesktopDistributeParams
+  ): Promise<DesktopDistributeResult> {
+    if (!params.windows && !params.macos && !params.linux) {
+      throw new Error(
+        'At least one platform artifact (windows, macos, linux) must be provided.'
+      );
+    }
+
+    const form = new FormData();
+    const appendArtifact = (
+      key: string,
+      data: Blob | File | Buffer | ArrayBuffer | undefined,
+      fallbackName: string,
+      customName?: string
+    ) => {
+      if (!data) return;
+      const name =
+        customName ??
+        (data instanceof File ? data.name : fallbackName);
+      form.append(
+        key,
+        data instanceof Blob || data instanceof File
+          ? data
+          : new Blob([data]),
+        name
+      );
+    };
+
+    appendArtifact('windows', params.windows, 'installer.exe', params.windowsFilename);
+    appendArtifact('macos', params.macos, 'app.dmg', params.macosFilename);
+    appendArtifact('linux', params.linux, 'app.AppImage', params.linuxFilename);
+
+    return this.client.httpClient.requestMultipart<DesktopDistributeResult>(
+      'POST',
+      'deploy/distribute/desktop',
+      form,
+      {
+        params: {
+          project_id: String(params.projectId),
+          version: params.version ?? '1.0.0',
+        },
+      }
+    );
   }
 
   /**

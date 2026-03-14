@@ -1,4 +1,4 @@
-import type { FleeksClient } from '../client';
+﻿import type { FleeksClient } from '../client';
 import type {
   AgentExecution,
   AgentHandoff,
@@ -9,6 +9,8 @@ import type {
   HandoffAgentOptions,
   ListAgentsOptions,
   StopAgentResponse,
+  RunSubAgentOptions,
+  SubAgentResult,
 } from '../types/agent';
 import { AgentType } from '../types/agent';
 
@@ -88,5 +90,38 @@ export class AgentManager {
    */
   async stop(agentId: string): Promise<StopAgentResponse> {
     return this.client.post<StopAgentResponse>(`agents/${agentId}/stop`);
+  }
+
+  /**
+   * Run a dynamic sub-agent for a focused task.
+   *
+   * Spawns a lightweight, isolated LLM call to handle a specific sub-task.
+   * No hardcoded roles - the prompt defines what the sub-agent does.
+   *
+   * @param options Sub-agent options (prompt is required)
+   * @returns Sub-agent result with response text, usage, and metadata
+   *
+   * @example
+   * ```ts
+   * const result = await workspace.agents.runSubagent({
+   *   prompt: 'Review this code for security issues',
+   *   description: 'Security review',
+   *   context: { code: fileContent },
+   * });
+   * console.log(result.result);
+   * ```
+   */
+  async runSubagent(options: RunSubAgentOptions): Promise<SubAgentResult> {
+    return this.client.post<SubAgentResult>('agents/subagent', {
+      prompt: options.prompt,
+      description: options.description ?? 'Sub-agent task',
+      model: options.model ?? 'auto',
+      max_tokens: options.maxTokens ?? 16384,
+      max_iterations: options.maxIterations ?? 1,
+      temperature: options.temperature ?? 0.0,
+      ...(options.parentSessionId && { parent_session_id: options.parentSessionId }),
+      ...(options.context && { context: options.context }),
+      ...(options.system && { system: options.system }),
+    });
   }
 }

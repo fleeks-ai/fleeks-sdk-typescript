@@ -50,6 +50,10 @@ export { AgentManager } from './managers/agents';
 export { EmbedManager, Embed } from './managers/embeds';
 export { DeployManager } from './managers/deploy';
 export { StreamingClient } from './managers/streaming';
+export { ScheduleManager } from './managers/schedules';
+export { ChannelManager } from './managers/channels';
+export { AutomationManager } from './managers/automations';
+export { PreviewManager } from './managers/previews';
 
 // ── Types: Workspace ────────────────────────────────────────
 export type {
@@ -102,6 +106,9 @@ export type {
   HandoffAgentOptions,
   ListAgentsOptions,
   StopAgentResponse,
+  RunSubAgentOptions,
+  SubAgentResult,
+  SubAgentUsage,
 } from './types/agent';
 
 // ── Types: Embed ────────────────────────────────────────────
@@ -152,7 +159,54 @@ export type {
 } from './types/streaming';
 
 // ── Types: Common ───────────────────────────────────────────
+// -- Types: Preview --------------------------------------
+export type {
+  PreviewSession,
+  PreviewStatus,
+  PreviewFramework,
+  StartPreviewOptions,
+  DetectedServer,
+  PreviewHealthStatus,
+} from './types/preview';
+
 export type { PaginatedResponse, ApiResponse } from './types/common';
+
+// -- Types: Schedule / Always-On ---------------------------
+export { ScheduleType, DaemonStatusEnum } from './types/schedule';
+export type {
+  Schedule,
+  ScheduleList,
+  CreateScheduleOptions,
+  UpdateScheduleOptions,
+  ListSchedulesOptions,
+  ScheduleStartResult,
+  DaemonStatusInfo,
+  DaemonLogs,
+  QuotaMetric,
+  QuotaCounter,
+  QuotaUsage,
+} from './types/schedule';
+
+// -- Types: Channel ----------------------------------------
+export type {
+  ChannelTypeInfo,
+  Channel,
+  ChannelList,
+  CreateChannelOptions,
+  UpdateChannelOptions,
+  ListChannelsOptions,
+  AuthFlowResult,
+} from './types/channel';
+
+// -- Types: Automation -------------------------------------
+export type {
+  Automation,
+  AutomationList,
+  CreateAutomationOptions,
+  UpdateAutomationOptions,
+  ListAutomationsOptions,
+  AutomationTestResult,
+} from './types/automation';
 
 // ── Types: Deploy ───────────────────────────────────────────
 export { DeploymentStatusEnum, DeployStatusResult } from './types/deploy';
@@ -161,10 +215,17 @@ export type {
   DeployResponse,
   DeployStatus,
   DeployLogs,
+  DeployLogEvent,
   DeployRollbackResult,
   DeployDeleteResult,
   DeployListItem,
   DeployListOptions,
+  ProvisionDbParams,
+  ProvisionDbResult,
+  MobileDistributeParams,
+  MobileDistributeResult,
+  DesktopDistributeParams,
+  DesktopDistributeResult,
 } from './types/deploy';
 
 // ── Utilities ───────────────────────────────────────────────

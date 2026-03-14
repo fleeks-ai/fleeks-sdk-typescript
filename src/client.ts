@@ -5,6 +5,10 @@ import { WorkspaceManager } from './managers/workspaces';
 import { EmbedManager } from './managers/embeds';
 import { DeployManager } from './managers/deploy';
 import { StreamingClient } from './managers/streaming';
+import { ScheduleManager } from './managers/schedules';
+import { ChannelManager } from './managers/channels';
+import { AutomationManager } from './managers/automations';
+import { PreviewManager } from './managers/previews';
 
 export class FleeksClient {
   readonly config: FleeksConfig;
@@ -16,6 +20,10 @@ export class FleeksClient {
   private _embeds?: EmbedManager;
   private _deploy?: DeployManager;
   private _streaming?: StreamingClient;
+  private _schedules?: ScheduleManager;
+  private _channels?: ChannelManager;
+  private _automations?: AutomationManager;
+  private _previews?: PreviewManager;
 
   constructor(options: { apiKey?: string; config?: Partial<FleeksConfig> } = {}) {
     const apiKey = options.apiKey
@@ -49,6 +57,30 @@ export class FleeksClient {
   get streaming(): StreamingClient {
     this._streaming ??= new StreamingClient(this.config);
     return this._streaming;
+  }
+
+  /** Access agent schedule management (always-on, cron, quota). */
+  get schedules(): ScheduleManager {
+    this._schedules ??= new ScheduleManager(this);
+    return this._schedules;
+  }
+
+  /** Access messaging channel management (Slack, Discord, WhatsApp, etc.). */
+  get channels(): ChannelManager {
+    this._channels ??= new ChannelManager(this);
+    return this._channels;
+  }
+
+  /** Access automation trigger management (webhooks, GitHub events, etc.). */
+  get automations(): AutomationManager {
+    this._automations ??= new AutomationManager(this);
+    return this._automations;
+  }
+
+  /** Access preview session management (start, stop, list, health, detect). */
+  get previews(): PreviewManager {
+    this._previews ??= new PreviewManager(this);
+    return this._previews;
   }
 
   // ── HTTP shorthand methods ────────────────────────────────

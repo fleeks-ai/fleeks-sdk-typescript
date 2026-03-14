@@ -110,6 +110,16 @@ export const LifecyclePresets = {
     keepAliveOnPreview: true,
     heartbeatIntervalSeconds: 600,
   }),
+
+  /** Preset for always-on agent workspaces (auto-created by schedule start). */
+  agentWorkspace: (): LifecycleConfig => ({
+    idleTimeoutMinutes: 0,
+    maxDurationHours: undefined,
+    idleAction: IdleAction.KEEP_ALIVE,
+    autoWake: true,
+    keepAliveOnPreview: true,
+    heartbeatIntervalSeconds: 300,
+  }),
 };
 
 // ── Tier Limits ─────────────────────────────────────────────
