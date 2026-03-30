@@ -155,17 +155,27 @@ export interface ProvisionDbParams {
 /**
  * Result from `POST /sdk/deploy/provision-db`.
  *
- * `host` ends in `.svc.cluster.local` — it is an internal address reachable
- * only from inside the GKE VPC (i.e. from your deployed Cloud Run service).
+ * For `postgresql`, the backend provisions on Cloud SQL (`10.18.0.3`).
+ * For `redis`, it returns Memorystore Redis info (`10.17.182.43`).
+ * Other engines fall back to the legacy in-cluster provisioner.
+ *
+ * All hosts are internal VPC addresses reachable only from your deployed
+ * Cloud Run service (not from the public internet).
  */
 export interface ProvisionDbResult {
-  dbType: string;
-  connectionUrl: string;
-  envVarName: string;
-  cloudRunService: string;
-  host: string;
-  port: number;
-  message: string;
+  dbType?: string;
+  connectionUrl?: string;
+  /** Alias — Cloud SQL provisioner returns `database_url` */
+  databaseUrl?: string;
+  envVarName?: string;
+  cloudRunService?: string;
+  host?: string;
+  dbName?: string;
+  dbUser?: string;
+  dbHost?: string;
+  dbPort?: string;
+  port?: number;
+  message?: string;
 }
 
 // ── Mobile Distribution ─────────────────────────────────────
@@ -236,4 +246,157 @@ export interface DesktopDistributeResult {
   landingPageUrl: string;
   expiresIn: string;
   version: string;
+}
+
+// ── Diagnose ────────────────────────────────────────────────
+
+/**
+ * Result from `POST /sdk/deploy/{id}/diagnose`.
+ *
+ * `patternsFound` lists named failure signatures (e.g. `"dependency_not_found"`).
+ * `suggestedFixes` are actionable steps to resolve the failure.
+ */
+export interface DiagnoseResult {
+  deploymentId: number;
+  patternsFound: string[];
+  diagnosis: string;
+  suggestedFixes: string[];
+  autoFixable: boolean;
+}
+
+// ── Health Check ────────────────────────────────────────────
+
+/**
+ * Result from `GET /sdk/deploy/{id}/health`.
+ *
+ * `status` is `"HEALTHY"` | `"DEGRADED"` | `"UNHEALTHY"`.
+ * `urlCheck` contains HTTP probe details when the service has a URL.
+ */
+export interface HealthCheckResult {
+  serviceName: string;
+  url?: string;
+  status: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' | string;
+  revisions: Record<string, unknown>[];
+  traffic: Record<string, unknown>[];
+  urlCheck?: Record<string, unknown>;
+  message: string;
+}
+
+// ── Runtime Logs ────────────────────────────────────────────
+
+export interface RuntimeLogEntry {
+  timestamp?: string;
+  severity: string;
+  message: string;
+}
+
+/**
+ * Result from `GET /sdk/deploy/{id}/runtime-logs`.
+ *
+ * Contains live container logs from Cloud Logging — distinct from the
+ * build-time logs returned by `deploy.logs()`.
+ */
+export interface RuntimeLogsResult {
+  deploymentId: number;
+  serviceName: string;
+  logs: RuntimeLogEntry[];
+  count: number;
+  errorCount: number;
+  message: string;
+}
+
+export interface RuntimeLogsOptions {
+  /** Minimum severity filter (default `"DEFAULT"`). */
+  severity?: 'DEFAULT' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
+  /** Maximum number of log entries (1–200, default 50). */
+  limit?: number;
+}
+
+// ── Metrics ─────────────────────────────────────────────────
+
+export interface LatencyMetrics {
+  p50?: number;
+  p95?: number;
+  p99?: number;
+}
+
+/**
+ * Result from `GET /sdk/deploy/{id}/metrics`.
+ *
+ * Contains Cloud Run performance metrics over a configurable time window.
+ */
+export interface MetricsResult {
+  deploymentId: number;
+  serviceName: string;
+  windowMinutes: number;
+  requestCount?: number;
+  errorRate?: number;
+  latencyMs?: LatencyMetrics;
+  instanceCount?: number;
+  message: string;
+}
+
+export interface MetricsOptions {
+  /** Lookback window in minutes (1–1440, default 60). */
+  windowMinutes?: number;
+}
+
+// ── Multi-Service Deploy ────────────────────────────────────
+
+export interface MultiDeployParams {
+  /** The Fleeks project ID. */
+  projectId: number;
+  /** Target environment (default: `"staging"`). */
+  environment?: string;
+  /**
+   * Optional `fleeks.yaml` content as a string.
+   * If omitted, the manifest is read from the project's GCS workspace.
+   */
+  manifestYaml?: string;
+}
+
+export interface MultiServiceResult {
+  deploymentId: number;
+  url?: string;
+  status: string;
+}
+
+/**
+ * Result from `POST /sdk/deploy/multi`.
+ *
+ * `services` maps service name → individual deployment result.
+ */
+export interface MultiDeployResult {
+  groupId: string;
+  total: number;
+  deployed: number;
+  services: Record<string, MultiServiceResult>;
+  message: string;
+}
+
+// ── Secrets Management ──────────────────────────────────────
+
+export interface SecretsSetParams {
+  /** The Fleeks project ID. */
+  projectId: number;
+  /** Key-value pairs to store in GCP Secret Manager. */
+  secrets: Record<string, string>;
+  /** Target environment (default: `"production"`). */
+  environment?: string;
+}
+
+export interface SecretEntry {
+  key: string;
+  createdAt?: string;
+}
+
+export interface SecretsListResult {
+  projectId: number;
+  secrets: SecretEntry[];
+  count: number;
+}
+
+export interface SecretsDeleteResult {
+  success: boolean;
+  message: string;
 }

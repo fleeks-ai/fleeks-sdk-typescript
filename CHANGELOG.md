@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-03-30
+
+### Added
+
+- **DeployManager.diagnose()**: Pattern-match against 13 known failure signatures and return actionable diagnosis with suggested fixes
+- **DeployManager.health()**: Check Cloud Run service health — revision conditions, traffic split, and URL reachability
+- **DeployManager.runtimeLogs()**: Fetch live container logs from Cloud Logging (distinct from build-time logs)
+- **DeployManager.metrics()**: Fetch Cloud Run performance metrics — request count, latency percentiles (p50/p95/p99), error rate, instance count
+- **DeployManager.multiDeploy()**: Deploy multi-service projects from a `fleeks.yaml` manifest
+- **DeployManager.setSecrets()**: Store environment secrets in GCP Secret Manager, auto-injected on deploy
+- **DeployManager.listSecrets()**: List secret keys for a project (values never exposed)
+- **DeployManager.deleteSecrets()**: Delete all secrets for a project
+- **New types**: `DiagnoseResult`, `HealthCheckResult`, `RuntimeLogEntry`, `RuntimeLogsResult`, `RuntimeLogsOptions`, `LatencyMetrics`, `MetricsResult`, `MetricsOptions`, `MultiDeployParams`, `MultiServiceResult`, `MultiDeployResult`, `SecretsSetParams`, `SecretEntry`, `SecretsListResult`, `SecretsDeleteResult`
+
+### Changed
+
+- **ProvisionDbResult**: Updated to support Cloud SQL (PostgreSQL) and Memorystore (Redis) provisioners; all fields now optional to accommodate different engine responses
+
 ## [0.5.0] - 2026-02-27
 
 ### Changed

@@ -226,6 +226,21 @@ export type {
   MobileDistributeResult,
   DesktopDistributeParams,
   DesktopDistributeResult,
+  DiagnoseResult,
+  HealthCheckResult,
+  RuntimeLogEntry,
+  RuntimeLogsResult,
+  RuntimeLogsOptions,
+  LatencyMetrics,
+  MetricsResult,
+  MetricsOptions,
+  MultiDeployParams,
+  MultiServiceResult,
+  MultiDeployResult,
+  SecretsSetParams,
+  SecretEntry,
+  SecretsListResult,
+  SecretsDeleteResult,
 } from './types/deploy';
 
 // ── Utilities ───────────────────────────────────────────────

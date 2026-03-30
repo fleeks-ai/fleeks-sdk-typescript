@@ -24,6 +24,17 @@ import type {
   MobileDistributeResult,
   DesktopDistributeParams,
   DesktopDistributeResult,
+  DiagnoseResult,
+  HealthCheckResult,
+  RuntimeLogsResult,
+  RuntimeLogsOptions,
+  MetricsResult,
+  MetricsOptions,
+  MultiDeployParams,
+  MultiDeployResult,
+  SecretsSetParams,
+  SecretsListResult,
+  SecretsDeleteResult,
 } from '../types/deploy';
 
 export class DeployManager {
@@ -297,6 +308,135 @@ export class DeployManager {
       project_id: String(projectId),
       limit: String(limit),
     });
+  }
+
+  // ── Diagnose ────────────────────────────────────────────
+
+  /**
+   * Diagnose a failed deployment.
+   *
+   * Pattern-matches against 13 known failure signatures and returns an
+   * actionable diagnosis with suggested fixes.
+   *
+   * @param deploymentId - The deployment ID to diagnose.
+   */
+  async diagnose(deploymentId: number): Promise<DiagnoseResult> {
+    return this.client.post<DiagnoseResult>(
+      `deploy/${deploymentId}/diagnose`
+    );
+  }
+
+  // ── Health ──────────────────────────────────────────────
+
+  /**
+   * Check the health of a deployed Cloud Run service.
+   *
+   * Inspects revision conditions, traffic split, and URL reachability.
+   * Returns `"HEALTHY"`, `"DEGRADED"`, or `"UNHEALTHY"`.
+   *
+   * @param deploymentId - The deployment ID to check.
+   */
+  async health(deploymentId: number): Promise<HealthCheckResult> {
+    return this.client.get<HealthCheckResult>(
+      `deploy/${deploymentId}/health`
+    );
+  }
+
+  // ── Runtime Logs ────────────────────────────────────────
+
+  /**
+   * Fetch live runtime (container) logs from Cloud Logging.
+   *
+   * Different from `logs()` which returns build-time logs. Use this when
+   * the app is deployed but crashing or returning errors.
+   *
+   * @param deploymentId - The deployment ID.
+   * @param options - Severity filter and limit.
+   */
+  async runtimeLogs(
+    deploymentId: number,
+    options?: RuntimeLogsOptions
+  ): Promise<RuntimeLogsResult> {
+    return this.client.get<RuntimeLogsResult>(
+      `deploy/${deploymentId}/runtime-logs`,
+      {
+        severity: options?.severity ?? 'DEFAULT',
+        limit: String(options?.limit ?? 50),
+      }
+    );
+  }
+
+  // ── Metrics ─────────────────────────────────────────────
+
+  /**
+   * Fetch performance metrics for a deployed Cloud Run service.
+   *
+   * Returns request count, latency percentiles (p50/p95/p99), error rate,
+   * and active instance count over the specified time window.
+   *
+   * @param deploymentId - The deployment ID.
+   * @param options - Time window configuration.
+   */
+  async metrics(
+    deploymentId: number,
+    options?: MetricsOptions
+  ): Promise<MetricsResult> {
+    return this.client.get<MetricsResult>(
+      `deploy/${deploymentId}/metrics`,
+      {
+        window_minutes: String(options?.windowMinutes ?? 60),
+      }
+    );
+  }
+
+  // ── Multi-Service Deploy ────────────────────────────────
+
+  /**
+   * Deploy a multi-service project from a `fleeks.yaml` manifest.
+   *
+   * Each service gets its own Cloud Run instance with auto-injected
+   * service-to-service URLs. Tier limits apply.
+   *
+   * @param params - Project ID, environment, and optional manifest YAML.
+   */
+  async multiDeploy(params: MultiDeployParams): Promise<MultiDeployResult> {
+    return this.client.post<MultiDeployResult>('deploy/multi', {
+      project_id: params.projectId,
+      environment: params.environment ?? 'staging',
+      ...(params.manifestYaml
+        ? { manifest_yaml: params.manifestYaml }
+        : {}),
+    });
+  }
+
+  // ── Secrets Management ──────────────────────────────────
+
+  /**
+   * Set environment secrets for a project.
+   *
+   * Secrets are stored in GCP Secret Manager and auto-injected into
+   * the project's Cloud Run service on the next deploy.
+   */
+  async setSecrets(params: SecretsSetParams): Promise<{ success: boolean; message: string }> {
+    return this.client.post('deploy/secrets', {
+      project_id: params.projectId,
+      secrets: params.secrets,
+      environment: params.environment ?? 'production',
+    });
+  }
+
+  /**
+   * List secret keys for a project (values are never exposed).
+   */
+  async listSecrets(projectId: number): Promise<SecretsListResult> {
+    return this.client.get<SecretsListResult>(`deploy/secrets/${projectId}`);
+  }
+
+  /**
+   * Delete all secrets for a project.
+   */
+  async deleteSecrets(projectId: number): Promise<SecretsDeleteResult> {
+    return this.client.delete<SecretsDeleteResult>(`deploy/secrets/${projectId}`);
   }
 
   /**
