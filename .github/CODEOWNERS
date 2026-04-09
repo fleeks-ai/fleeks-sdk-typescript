@@ -1,0 +1,19 @@
+# fleeks-sdk-typescript CODEOWNERS
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default — SDK team owns everything
+* @fleeks-ai/sdk-team
+
+# Core SDK source
+/src/ @fleeks-ai/sdk-team @fleeks-ai/backend-leads
+
+# Build / packaging
+/package.json @fleeks-ai/sdk-team @fleeks-ai/backend-leads
+/tsconfig.json @fleeks-ai/sdk-team
+/tsup.config.ts @fleeks-ai/sdk-team
+
+# CI/CD and release
+/.github/ @fleeks-ai/devops-team @fleeks-ai/sdk-team
+
+# Tests
+/tests/ @fleeks-ai/sdk-team

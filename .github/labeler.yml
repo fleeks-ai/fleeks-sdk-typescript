@@ -1,0 +1,39 @@
+# SDK source
+sdk:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**'
+
+# Tests
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'tests/**'
+
+# Examples
+examples:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'examples/**'
+
+# Build / Packaging
+build:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'tsup.config.ts'
+      - 'vitest.config.ts'
+
+# Infrastructure
+infrastructure:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**'
+
+# Documentation
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'docs/**'
+      - '*.md'

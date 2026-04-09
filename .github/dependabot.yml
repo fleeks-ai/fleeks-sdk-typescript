@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    groups:
+      production:
+        patterns: ["node-fetch*", "ws*", "eventsource*"]
+      build-tools:
+        patterns: ["typescript", "tsup*", "esbuild*"]
+      testing:
+        patterns: ["vitest*", "@vitest/*"]
+      linting:
+        patterns: ["eslint*", "prettier*", "@typescript-eslint/*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
