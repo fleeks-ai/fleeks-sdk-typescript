@@ -54,6 +54,11 @@ export { ScheduleManager } from './managers/schedules';
 export { ChannelManager } from './managers/channels';
 export { AutomationManager } from './managers/automations';
 export { PreviewManager } from './managers/previews';
+export { VoiceManager, VoiceSession } from './managers/voice';
+export { AIKeysManager } from './managers/ai-keys';
+
+// ── Types: AI Keys ──────────────────────────────────────────
+export type { AIKeyInfo, SetAIKeyOptions, AIKeyDeleteResult } from './types/ai-keys';
 
 // ── Types: Workspace ────────────────────────────────────────
 export type {
@@ -246,3 +251,19 @@ export type {
 // ── Utilities ───────────────────────────────────────────────
 export { toCamelCase, toSnakeCase } from './utils/case';
 export { normalizeUrl } from './utils/url';
+
+// ── Types: Voice ────────────────────────────────────────────
+export { VoiceSessionState, VoiceEventType } from './types/voice';
+export type {
+  VoiceStartOptions,
+  VoiceSessionInfo,
+  VoiceAudioResponse,
+  VoiceTranscript,
+  VoiceToolExecution,
+  VoiceUsage,
+  VoiceEvent,
+  VoiceEventCallback,
+  VoiceConfig,
+  VoiceStats,
+  VoiceHealth,
+} from './types/voice';

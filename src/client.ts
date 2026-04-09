@@ -9,6 +9,8 @@ import { ScheduleManager } from './managers/schedules';
 import { ChannelManager } from './managers/channels';
 import { AutomationManager } from './managers/automations';
 import { PreviewManager } from './managers/previews';
+import { VoiceManager } from './managers/voice';
+import { AIKeysManager } from './managers/ai-keys';
 
 export class FleeksClient {
   readonly config: FleeksConfig;
@@ -24,6 +26,8 @@ export class FleeksClient {
   private _channels?: ChannelManager;
   private _automations?: AutomationManager;
   private _previews?: PreviewManager;
+  private _voice?: VoiceManager;
+  private _aiKeys?: AIKeysManager;
 
   constructor(options: { apiKey?: string; config?: Partial<FleeksConfig> } = {}) {
     const apiKey = options.apiKey
@@ -83,6 +87,18 @@ export class FleeksClient {
     return this._previews;
   }
 
+  /** Access real-time voice conversations with Fleeks AI agents (Gemini Live). */
+  get voice(): VoiceManager {
+    this._voice ??= new VoiceManager(this);
+    return this._voice;
+  }
+
+  /** Access AI provider key management (BYOK). */
+  get aiKeys(): AIKeysManager {
+    this._aiKeys ??= new AIKeysManager(this);
+    return this._aiKeys;
+  }
+
   // ── HTTP shorthand methods ────────────────────────────────
 
   async get<T = Record<string, unknown>>(
@@ -134,6 +150,7 @@ export class FleeksClient {
   }
 
   async close(): Promise<void> {
+    await this._voice?.disconnect();
     await this._streaming?.disconnect();
   }
 
